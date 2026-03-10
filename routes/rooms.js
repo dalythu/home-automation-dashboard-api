@@ -118,7 +118,7 @@ router.patch('/:roomId/lights/:lightId', async (req, res) => {
       return res.status(404).json({ error: 'Light not found' })
     }
 
-    if (typeof req.body.on === 'boolean') {
+    if (req.body && typeof req.body.on === 'boolean') {
       light.on = req.body.on
     } else {
       light.on = !light.on
@@ -128,6 +128,7 @@ router.patch('/:roomId/lights/:lightId', async (req, res) => {
 
     res.json(room)
   } catch (error) {
+    console.error('Failed to update light:', error)
     res.status(500).json({ error: 'Failed to update light' })
   }
 })
