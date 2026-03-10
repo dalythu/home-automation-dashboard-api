@@ -73,4 +73,82 @@ router.delete('/:roomId', async (req, res) => {
   }
 })
 
+// CREATE light in a room
+router.post('/:roomId/lights', async (req, res) => {
+  try {
+    const room = await Room.findOne({ id: req.params.roomId })
+
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' })
+    }
+
+    const { name } = req.body
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Light name is required' })
+    }
+
+    const newLight = {
+      id: name.toLowerCase().replace(/\s+/g, '-'),
+      name: name.trim(),
+      on: false,
+    }
+
+    room.lights.push(newLight)
+    await room.save()
+
+    res.status(201).json(room)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add light' })
+  }
+})
+
+// UPDATE / TOGGLE light in a room
+router.patch('/:roomId/lights/:lightId', async (req, res) => {
+  try {
+    const room = await Room.findOne({ id: req.params.roomId })
+
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' })
+    }
+
+    const light = room.lights.find((l) => l.id === req.params.lightId)
+
+    if (!light) {
+      return res.status(404).json({ error: 'Light not found' })
+    }
+
+    if (typeof req.body.on === 'boolean') {
+      light.on = req.body.on
+    } else {
+      light.on = !light.on
+    }
+
+    await room.save()
+
+    res.json(room)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update light' })
+  }
+})
+
+// DELETE light from a room
+router.delete('/:roomId/lights/:lightId', async (req, res) => {
+  try {
+    const room = await Room.findOne({ id: req.params.roomId })
+
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' })
+    }
+
+    room.lights = room.lights.filter((l) => l.id !== req.params.lightId)
+
+    await room.save()
+
+    res.json(room)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to remove light' })
+  }
+})
+
 export default router
