@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const lightSchema = new mongoose.Schema(
   {
@@ -16,8 +16,8 @@ const lightSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { _id: false }
-);
+  { _id: false },
+)
 
 const roomSchema = new mongoose.Schema(
   {
@@ -43,9 +43,9 @@ const roomSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
-);
+  },
+)
 
-const Room = mongoose.model("Room", roomSchema);
+const Room = mongoose.model('Room', roomSchema)
 
-export default Room;
+export default Room
